@@ -4,13 +4,13 @@ import Countdown from "@/components/Countdown";
 import Photo from "@/components/Photo";
 import ProductGrid from "@/components/ProductGrid";
 import Reveal from "@/components/Reveal";
-import { cropClass, spotifyEmbed } from "@/data/products";
+import SpotifyPlayer from "@/components/SpotifyPlayer";
+import { cropClass } from "@/data/products";
 import { getSite } from "@/lib/store";
 
 export default async function Home() {
   const { products, categories, collections, settings, community } = await getSite();
   const collection = collections.at(0);
-  const spotify = spotifyEmbed(settings.spotify);
   const marquee = ["Blackfit", "Streetwear", "Wear your identity", "Built for the culture", ...collections.map((item) => item.name)];
   return (
     <main>
@@ -79,12 +79,7 @@ export default async function Home() {
         </section>
       )}
 
-      {spotify && (
-        <section className="home-section">
-          <Reveal className="section-heading"><h2>Suena en Blackfit</h2><a href={settings.spotify} target="_blank" rel="noopener noreferrer">Abrir en Spotify <span aria-hidden="true">→</span></a></Reveal>
-          <Reveal className="tile spotify"><iframe src={spotify} title="Playlist de Blackfit en Spotify" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" /></Reveal>
-        </section>
-      )}
+      <SpotifyPlayer url={settings.spotify} />
 
       {community.length > 0 && (
         <section className="home-section">

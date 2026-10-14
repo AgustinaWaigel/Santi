@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ProductGrid from "@/components/ProductGrid";
+import SpotifyPlayer from "@/components/SpotifyPlayer";
 import type { Product } from "@/data/products";
 import { stockOf } from "@/lib/pricing";
 import { getSite } from "@/lib/store";
@@ -18,7 +19,7 @@ const SORTS: Record<string, { label: string; compare?: (a: Product, b: Product) 
 
 // Listado de la tienda con buscador, orden y filtros; `active` es la ruta del filtro de colección o categoría elegido.
 export default async function ShopListing({ eyebrow, title, active, products, query }: { eyebrow: string; title: string; active: string; products: Product[]; query: ShopQuery }) {
-  const { categories, collections } = await getSite();
+  const { categories, collections, settings } = await getSite();
   const search = one(query.q).trim().slice(0, 60);
   const sort = Object.hasOwn(SORTS, one(query.orden)) ? one(query.orden) : "";
   const sizes = [...new Set(products.flatMap((product) => product.sizes))];
@@ -43,7 +44,8 @@ export default async function ShopListing({ eyebrow, title, active, products, qu
   const filtered = Boolean(search || sort || size || min !== null || max !== null);
 
   return (
-    <main className="shop-page">
+    <>
+    <main className="shop-page shop-page--listing">
       <p className="eyebrow">{eyebrow}</p>
       <h1>{title}</h1>
       <nav className="chip-row" aria-label="Colecciones y categorías">
@@ -66,5 +68,8 @@ export default async function ShopListing({ eyebrow, title, active, products, qu
       </form>
       <ProductGrid products={sorted} empty={filtered ? "No encontramos prendas con esos filtros." : undefined} />
     </main>
+    <SpotifyPlayer url={settings.spotify} compact />
+    <div className="page-end" />
+    </>
   );
 }
