@@ -1,9 +1,15 @@
-import { readUpload, UPLOAD_TYPES, VIDEO_TYPES } from "@/lib/store";
+import { readUpload, remoteUploadUrl, supabaseConfigured, UPLOAD_TYPES, validUploadName, VIDEO_TYPES } from "@/lib/store";
 
 const TYPES = { ...UPLOAD_TYPES, ...VIDEO_TYPES };
 
 export async function GET(request: Request, { params }: RouteContext<"/uploads/[file]">) {
   const { file } = await params;
+  // Con Supabase los archivos están en su almacenamiento público: se redirige ahí y el navegador recuerda el destino.
+  if (supabaseConfigured()) {
+    if (!validUploadName(file)) return new Response("No encontrado", { status: 404 });
+    return new Response(null, { status: 308, headers: { Location: remoteUploadUrl(file), "Cache-Control": "public, max-age=31536000, immutable" } });
+  }
+
   const data = await readUpload(file);
   if (!data) return new Response("No encontrado", { status: 404 });
   const extension = file.split(".").pop();

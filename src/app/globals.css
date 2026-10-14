@@ -310,7 +310,8 @@ progress::-moz-progress-bar { background: var(--red); border-radius: 999px; }
 .community__photo:hover img { filter: none; transform: scale(1.04); }
 .community__photo span { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 4px; padding: 40px 16px 14px; background: linear-gradient(transparent, rgba(0,0,0,.85)); font: 400 11px/1.3 var(--mono); text-transform: uppercase; }
 
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 48px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px; }
+.stats__storage { margin-bottom: 48px; }
 .stats .tile { display: flex; flex-direction: column; gap: 10px; padding: 20px; border: 1px solid var(--line); color: var(--muted); font: 400 11px/1.4 var(--mono); text-transform: uppercase; }
 .stats strong { color: var(--cream); font: 400 clamp(28px, 3.4vw, 44px)/.9 var(--display); letter-spacing: -.04em; }
 .stats a.tile:hover { border-color: var(--cream); }

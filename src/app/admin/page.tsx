@@ -6,7 +6,7 @@ import Photo from "@/components/Photo";
 import { formatPrice } from "@/data/products";
 import { adminConfigured, isAdmin } from "@/lib/auth";
 import { totalStock } from "@/lib/pricing";
-import { getSite } from "@/lib/store";
+import { getSite, supabaseConfigured } from "@/lib/store";
 import { deleteProduct } from "./actions";
 
 export default async function AdminPage() {
@@ -30,6 +30,7 @@ export default async function AdminPage() {
         <Link href="/admin/pedidos" className="tile"><span className="eyebrow">Pedidos pendientes</span><strong>{pending}</strong><span>Ver pedidos →</span></Link>
         <div className="tile"><span className="eyebrow">Poco stock</span><strong>{low.length}</strong><span>{low.length === 0 ? "Todo con más de 3 unidades" : low.slice(0, 3).map((product) => product.name).join(", ") + (low.length > 3 ? "…" : "")}</span></div>
       </div>
+      <p className="form-note stats__storage">Contenido guardado en: {supabaseConfigured() ? "Supabase" : "archivos de este servidor (carpeta data/)"}</p>
       <p className="eyebrow">Admin / {String(products.length).padStart(2, "0")} productos</p>
       <div className="admin__header"><h1>Productos</h1><Link href="/admin/productos/nuevo" className="btn">Nuevo producto</Link></div>
       {products.length === 0 ? <p className="empty-note">Todavía no hay productos. Cargá el primero.</p> : (
