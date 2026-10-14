@@ -43,6 +43,19 @@ export default async function Home() {
         </div>
       </div>
 
+      {categories.length > 0 && (
+        <section className="home-section">
+          <Reveal className="section-heading"><h2>Categorías</h2></Reveal>
+          <Reveal stagger className="category-grid">
+            {categories.map((category) => (
+              <Link href={`/categorias/${category.slug}`} className={`tile category-card ${cropClass(category.image)}`} key={category.slug}>
+                <Photo src={category.image} alt="" fill sizes="(max-width: 800px) 50vw, 25vw" /><span>{category.name}</span>
+              </Link>
+            ))}
+          </Reveal>
+        </section>
+      )}
+
       {settings.dropDate && <Countdown title={settings.dropTitle} date={settings.dropDate} />}
 
       <section className="home-section">
@@ -65,19 +78,6 @@ export default async function Home() {
           <Link href="/productos" className="btn btn--light">Descubrir la tienda</Link>
         </Reveal>
       </section>
-
-      {categories.length > 0 && (
-        <section className="home-section">
-          <Reveal className="section-heading"><h2>Categorías</h2></Reveal>
-          <Reveal stagger className="category-grid">
-            {categories.map((category) => (
-              <Link href={`/categorias/${category.slug}`} className={`tile category-card ${cropClass(category.image)}`} key={category.slug}>
-                <Photo src={category.image} alt="" fill sizes="(max-width: 800px) 50vw, 25vw" /><span>{category.name}</span>
-              </Link>
-            ))}
-          </Reveal>
-        </section>
-      )}
 
       <SpotifyPlayer url={settings.spotify} />
 
