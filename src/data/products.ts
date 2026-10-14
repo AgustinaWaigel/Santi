@@ -180,6 +180,12 @@ export function spotifyEmbed(url: string) {
   return match ? `https://open.spotify.com/embed/${match[1]}/${match[2]}?theme=0` : null;
 }
 
+// Igual que spotifyEmbed pero en formato spotify:tipo:id, el que pide la API de Spotify para controlar el reproductor.
+export function spotifyUri(url: string) {
+  const match = url.match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(playlist|album|artist|track)\/([A-Za-z0-9]+)/);
+  return match ? `spotify:${match[1]}:${match[2]}` : null;
+}
+
 export const formatPrice = (price: number) => `$${price.toLocaleString("es-AR")}`;
 
 // Las fotos iniciales traen una franja de interfaz arriba que hay que recortar; las subidas desde el admin no.

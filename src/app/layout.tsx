@@ -1,6 +1,7 @@
 import CartDrawer from "@/components/CartDrawer"
 import DropMode from "@/components/DropMode"
 import SalesToast from "@/components/SalesToast"
+import SpotifyDock from "@/components/SpotifyDock"
 import Wheel from "@/components/Wheel"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
@@ -49,6 +50,7 @@ export default async function RootLayout({
         <Header />
         {children}
         <Footer />
+        <SpotifyDock url={settings.spotify} />
         <SalesToast sales={sales} />
         {prizes.length > 0 && <Wheel percents={prizes} />}
         <CartDrawer products={products.map(({ slug, name, price, images, stock }) => ({ slug, name, price, images: images.slice(0, 1), stock }))} freeShippingFrom={settings.freeShippingFrom} />
