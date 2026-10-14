@@ -1,69 +1,104 @@
-import Image from "next/image";
+import Link from "next/link";
+import Carousel from "@/components/Carousel";
+import Countdown from "@/components/Countdown";
+import Photo from "@/components/Photo";
+import ProductGrid from "@/components/ProductGrid";
+import Reveal from "@/components/Reveal";
+import { cropClass, spotifyEmbed } from "@/data/products";
+import { getSite } from "@/lib/store";
 
-export default function Home() {
+export default async function Home() {
+  const { products, categories, collections, settings, community } = await getSite();
+  const collection = collections.at(0);
+  const spotify = spotifyEmbed(settings.spotify);
+  const marquee = ["Blackfit", "Streetwear", "Wear your identity", "Built for the culture", ...collections.map((item) => item.name)];
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main>
+      <section className="hero">
+        <div className="tile hero__main">
+          <Photo src={settings.heroImage} alt="Campaña Blackfit" fill preload sizes="(max-width: 800px) 100vw, 66vw" />
+          {settings.heroVideo && <video className="hero__video" src={settings.heroVideo} autoPlay muted loop playsInline aria-hidden="true" />}
+          <div className="hero__shade" />
+          <div className="hero__content">
+            <span className="eyebrow">{collection?.name ?? "Streetwear"}</span>
+            <h1 className="hero__title"><span>Blackfit</span></h1>
+            <div className="hero__bottom">
+              <p className="hero__tagline">{settings.heroTagline}</p>
+              <div className="hero__actions"><Link href="/productos" className="btn">Ver colección</Link><Link href="/lookbook" className="btn btn--ghost">Lookbook</Link></div>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="tile tile--red hero__outline" aria-hidden="true"><span>Black</span><span>Fit</span></div>
+        <Link href={collection ? `/colecciones/${collection.slug}` : "/productos"} className="tile tile--green hero__drop">
+          <span className="eyebrow">{collection ? "Nueva colección" : "Tienda"}</span>
+          <strong>{collection?.name ?? "Ver todo"}</strong>
+          <span className="eyebrow">Ver <span className="arrow">→</span></span>
+        </Link>
+        <div className={`tile hero__side ${collection ? cropClass(collection.image) : ""}`}>{collection && <Photo src={collection.image} alt="" fill sizes="(max-width: 800px) 50vw, 17vw" />}</div>
+      </section>
+
+      <div className="marquee" aria-hidden="true">
+        <div className="marquee__track">
+          {[...marquee, ...marquee, ...marquee, ...marquee].map((word, index) => <span key={index}>{word}</span>)}
         </div>
-      </main>
-    </div>
+      </div>
+
+      {settings.dropDate && <Countdown title={settings.dropTitle} date={settings.dropDate} />}
+
+      <section className="home-section">
+        <Reveal className="section-heading"><h2>Recién llegado</h2><Link href="/productos">Ver todo <span aria-hidden="true">→</span></Link></Reveal>
+        <ProductGrid products={products.slice(0, 3)} scroll />
+      </section>
+
+      <section className={`home-section editorial ${settings.lookbook.length === 0 ? "editorial--solo" : ""}`}>
+        {settings.lookbook.length > 0 && (
+          <Reveal className="tile editorial__image">
+            <Carousel label="Lookbook">
+              {settings.lookbook.map((image, index) => <div className={`carousel__photo ${cropClass(image)}`} key={image}><Photo src={image} alt={`Lookbook Blackfit, foto ${index + 1}`} fill sizes="(max-width: 800px) 100vw, 58vw" /></div>)}
+            </Carousel>
+          </Reveal>
+        )}
+        <Reveal className="tile tile--red editorial__copy">
+          <span className="eyebrow">Manifiesto</span>
+          <h2>{settings.manifestoTitle}</h2>
+          <p>{settings.manifestoText}</p>
+          <Link href="/productos" className="btn btn--light">Descubrir la tienda</Link>
+        </Reveal>
+      </section>
+
+      {categories.length > 0 && (
+        <section className="home-section">
+          <Reveal className="section-heading"><h2>Categorías</h2></Reveal>
+          <Reveal stagger className="category-grid">
+            {categories.map((category) => (
+              <Link href={`/categorias/${category.slug}`} className={`tile category-card ${cropClass(category.image)}`} key={category.slug}>
+                <Photo src={category.image} alt="" fill sizes="(max-width: 800px) 50vw, 25vw" /><span>{category.name}</span>
+              </Link>
+            ))}
+          </Reveal>
+        </section>
+      )}
+
+      {spotify && (
+        <section className="home-section">
+          <Reveal className="section-heading"><h2>Suena en Blackfit</h2><a href={settings.spotify} target="_blank" rel="noopener noreferrer">Abrir en Spotify <span aria-hidden="true">→</span></a></Reveal>
+          <Reveal className="tile spotify"><iframe src={spotify} title="Playlist de Blackfit en Spotify" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" /></Reveal>
+        </section>
+      )}
+
+      {community.length > 0 && (
+        <section className="home-section">
+          <Reveal className="section-heading"><h2>En la calle</h2></Reveal>
+          <Reveal stagger className="community">
+            {community.slice(0, 8).map((photo) => {
+              const product = products.find((item) => item.slug === photo.slug);
+              const content = <><Photo src={photo.image} alt={photo.caption || "Foto de un cliente"} fill sizes="(max-width: 800px) 50vw, 25vw" />{(photo.caption || product) && <span>{photo.caption}{product && <strong>{product.name} →</strong>}</span>}</>;
+              return product ? <Link href={`/productos/${product.slug}`} className="tile community__photo" key={photo.id}>{content}</Link> : <div className="tile community__photo" key={photo.id}>{content}</div>;
+            })}
+          </Reveal>
+        </section>
+      )}
+      <div className="page-end" />
+    </main>
   );
 }

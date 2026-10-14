@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# contenido y pedidos cargados desde el admin (incluye datos de clientes)
+/data
